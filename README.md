@@ -20,6 +20,10 @@ You should not need to use any XStream traits starting with `Raw` in your code (
 * Lightweight, type-safe wrapper over XStream.js – native Scala types, no extraneous allocations at runtime.
 * Convenient implicit conversions to work with streams of tuples and streams of streams.
 
+## Caveats
+
+In XStream.js/Cycle.js, a common convention is to name stream variables with trailing dollar signs, e.g. `response$` for a stream of responses. In Scala.js this naming sometimes causes a weird compilation error. I'm not sure why exactly, but I think it might have something to do with Scala's or Scala.js' internal representation making use of trailing dollar signs as well. I will try to figure this out some day, for now I personally prepend `$` instead, e.g. `$response`. Although if you use jQuery maybe go for a `responseStream` instead to avoid the confusion.
+
 ## TODO
 
 ### Integrity
@@ -43,6 +47,7 @@ You should not need to use any XStream traits starting with `Raw` in your code (
 ### Misc
 * Update to latest version of XStream
 * Figure out how versioning should work for this project
+* Figure out why we can't always use trailing dollar sign in stream variable names
 
 ## Reporting bugs
 * If you found a bug, please open a github issue describing actual and expected behavior.
