@@ -8,39 +8,39 @@ package object xstream {
     val stream: XStream[T, E]
   ) extends AnyVal {
 
-    def addListener(listener: Listener[T, E]): Unit =
+    @inline def addListener(listener: Listener[T, E]): Unit =
       stream.addListener(listener)
 
-    def removeListener(listener: Listener[T, E]): Unit =
+    @inline def removeListener(listener: Listener[T, E]): Unit =
       stream.removeListener(listener)
 
-    def subscribe[T2 >: T, E2 >: E <: js.Error](listener: Listener[T2, E2]): Subscription[T2, E2] =
+    @inline def subscribe[T2 >: T, E2 >: E <: js.Error](listener: Listener[T2, E2]): Subscription[T2, E2] =
       stream.subscribe(listener)
 
-    def map[U](project: T => U): XStream[U, E] = stream.mapJs(project)
+    @inline def map[U](project: T => U): XStream[U, E] = stream.mapJs(project)
 
-    def filter(passes: T => Boolean): XStream[T, E] =
+    @inline def filter(passes: T => Boolean): XStream[T, E] =
       stream.filterJs(passes)
 
-    def fold[R](accumulate: (R, T) => R, seed: R): MemoryStream[R, E] =
+    @inline def fold[R](accumulate: (R, T) => R, seed: R): MemoryStream[R, E] =
       stream.foldJs(accumulate, seed)
 
-    def replaceError[T2 >: T, E2 >: E <: js.Error](replace: E => XStream[T2, E2]): XStream[T2, E2] =
+    @inline def replaceError[T2 >: T, E2 >: E <: js.Error](replace: E => XStream[T2, E2]): XStream[T2, E2] =
       stream.replaceErrorJs((error: E) => replace(error))
 
-    def compose[T2, E2 <: js.Error, ResultStream <: XStream[T2, E2]](
+    @inline def compose[T2, E2 <: js.Error, ResultStream <: XStream[T2, E2]](
       operator: XStream[T, E] => ResultStream
     ): ResultStream = {
       stream.composeJs[T2, E2, ResultStream]((thisStream: XStream[T, E]) => operator(thisStream))
     }
 
-    def debug(spy: T => Unit): XStream[T, E] =
+    @inline def debug(spy: T => Unit): XStream[T, E] =
       stream.debugJs(spy)
 
-    def debugger(): XStream[T, E] =
+    @inline def debugger(): XStream[T, E] =
       stream.debugJs((value: T) => js.debugger())
 
-    def setDebugListener(listener: Listener[T, E]): Unit =
+    @inline def setDebugListener(listener: Listener[T, E]): Unit =
       stream.setDebugListener(listener)
   }
 
@@ -48,13 +48,13 @@ package object xstream {
     val memoryStream: MemoryStream[T, E]
   ) extends AnyVal {
 
-    def map[U](project: T => U): MemoryStream[U, E] =
+    @inline def map[U](project: T => U): MemoryStream[U, E] =
       memoryStream.mapJs(project)
 
-    def replaceError[U >: T, E2 <: js.Error](replace: E => XStream[U, E2]): MemoryStream[T, E2] =
+    @inline def replaceError[U >: T, E2 <: js.Error](replace: E => XStream[U, E2]): MemoryStream[T, E2] =
       memoryStream.replaceErrorJs(replace)
 
-    def debug(spy: T => Any): MemoryStream[T, E] =
+    @inline def debug(spy: T => Any): MemoryStream[T, E] =
       memoryStream.debugJs(spy)
   }
 
@@ -62,7 +62,7 @@ package object xstream {
     val streamOfStreams: XStream[XStream[T, E], Nothing]
   ) extends AnyVal {
 
-    def flatten: XStream[T, E] = streamOfStreams.flattenJs[T, E]()
+    @inline def flatten: XStream[T, E] = streamOfStreams.flattenJs[T, E]()
   }
 
   implicit class TupleStream2[+T1, +T2, +E <: js.Error] (
