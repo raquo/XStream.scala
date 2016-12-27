@@ -15,9 +15,13 @@ trait MemoryStream[+T, +E] extends XStream[T, E] {
 
   override def endWhen(other: XStream[_, _]): MemoryStream[T, E] = js.native
 
-  override def replaceError[U >: T, E2](replace: js.Function1[E, XStream[U, E2]]): MemoryStream[T, E2] = js.native
+  @JSName("replaceError")
+  override def replaceErrorJs[U >: T, E2](
+    replace: js.Function1[E, XStream[U, E2]]
+  ): MemoryStream[T, E2] = js.native
 
-  override def debug(spy: js.Function1[T, Any]): MemoryStream[T, E] = js.native
+  @JSName("debug")
+  override def debugJs(spy: js.Function1[T, Any]): MemoryStream[T, E] = js.native
 
   override def debug(label: String): MemoryStream[T, E] = js.native
 

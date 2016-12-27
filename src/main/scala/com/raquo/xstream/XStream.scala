@@ -20,7 +20,8 @@ trait XStream[+T, +E] extends js.Object {
 
   def mapTo[U](projectedValue: U): XStream[U, E] = js.native
 
-  def filter(passes: js.Function1[T, Boolean]): XStream[T, E] = js.native
+  @JSName("filter")
+  def filterJs(passes: js.Function1[T, Boolean]): XStream[T, E] = js.native
 
   def take(amount: Int): XStream[T, E] = js.native
 
@@ -32,20 +33,25 @@ trait XStream[+T, +E] extends js.Object {
 
   def endWhen(other: XStream[_, _]): XStream[T, E] = js.native
 
-  def fold[R](accumulate: js.Function2[R, T, R], seed: R): MemoryStream[R, E] = js.native
+  @JSName("fold")
+  def foldJs[R](accumulate: js.Function2[R, T, R], seed: R): MemoryStream[R, E] = js.native
 
-  def replaceError[U >: T, E2](replace: js.Function1[E, XStream[U, E2]]): XStream[U, E2] = js.native
+  @JSName("replaceError")
+  def replaceErrorJs[U >: T, E2](replace: js.Function1[E, XStream[U, E2]]): XStream[U, E2] = js.native
 
+  /** This is private because it works only on streams of streams. See [[MetaStream.flatten]] */
   @JSName("flatten")
   private[xstream] def flattenJs[T2, E2](): XStream[T2, E2] = js.native
 
-  def compose[U, E2](operator: js.Function1[XStream[T, E], XStream[U, E2]]): XStream[U, E2] = js.native
-
-  def compose[U, E2](operator: js.Function1[XStream[T, E2], MemoryStream[U, E2]]): MemoryStream[U, E2] = js.native
+  @JSName("compose")
+  def composeJs[T2, E2, ResultStream <: XStream[T2, E2]](
+    operator: js.Function1[XStream[T, E], ResultStream]
+  ): ResultStream = js.native
 
   def remember(): MemoryStream[T, E] = js.native
 
-  def debug(spy: js.Function1[T, Any]): XStream[T, E] = js.native
+  @JSName("debug")
+  def debugJs(spy: js.Function1[T, Any]): XStream[T, E] = js.native
 
   def debug(label: String): XStream[T, E] = js.native
 

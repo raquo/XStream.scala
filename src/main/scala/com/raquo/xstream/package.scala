@@ -18,26 +18,40 @@ package object xstream {
     def map[U](project: T => U): XStream[U, E] = stream.mapJs(project)
 
     def filter(passes: T => Boolean): XStream[T, E] =
-      stream.filter(passes)
+      stream.filterJs(passes)
 
     def fold[R](accumulate: (R, T) => R, seed: R): MemoryStream[R, E] =
-      stream.fold(accumulate, seed)
+      stream.foldJs(accumulate, seed)
 
     def replaceError[T2 >: T, E2 >: E](replace: E => XStream[T2, E2]): XStream[T2, E2] =
-      stream.replaceError((error: E) => replace(error))
+      stream.replaceErrorJs((error: E) => replace(error))
 
-    def compose[T2, E2](operator: XStream[T, E] => XStream[T2, E2]): XStream[T2, E2] = {
-      stream.compose((thisStream: XStream[T, E]) => operator(thisStream))
+    def compose[T2, E2, ResultStream <: XStream[T2, E2]](
+      operator: XStream[T, E] => ResultStream
+    ): ResultStream = {
+      stream.composeJs[T2, E2, ResultStream]((thisStream: XStream[T, E]) => operator(thisStream))
     }
 
     def debug(spy: T => Unit): XStream[T, E] =
-      stream.debug(spy)
+      stream.debugJs(spy)
 
     def debugger(): XStream[T, E] =
-      stream.debug((value: T) => js.debugger())
+      stream.debugJs((value: T) => js.debugger())
 
     def setDebugListener(listener: Listener[T, E]): Unit =
       stream.setDebugListener(listener)
+  }
+
+  implicit class RichMemoryStream[+T, +E] (val memoryStream: MemoryStream[T, E]) extends AnyVal {
+
+    def map[U](project: T => U): MemoryStream[U, E] =
+      memoryStream.mapJs(project)
+
+    def replaceError[U >: T, E2](replace: E => XStream[U, E2]): MemoryStream[T, E2] =
+      memoryStream.replaceErrorJs(replace)
+
+    def debug(spy: T => Any): MemoryStream[T, E] =
+      memoryStream.debugJs(spy)
   }
 
   implicit class MetaStream[T, E] (val streamOfStreams: XStream[XStream[T, E], Nothing]) extends AnyVal {
@@ -51,10 +65,10 @@ package object xstream {
       tupleStream.mapJs(project.tupled)
 
     @inline def filter(passes: (T1, T2) => Boolean): XStream[(T1, T2), E] =
-      tupleStream.filter(passes.tupled)
+      tupleStream.filterJs(passes.tupled)
 
     @inline def debug(spy: (T1, T2) => Any): XStream[(T1, T2), E] =
-      tupleStream.debug(spy.tupled)
+      tupleStream.debugJs(spy.tupled)
   }
 
   implicit class TupleStream3[+T1, +T2, +T3, +E](val tupleStream: XStream[(T1, T2, T3), E]) extends AnyVal {
@@ -63,10 +77,10 @@ package object xstream {
       tupleStream.mapJs(project.tupled)
 
     @inline def filter(passes: (T1, T2, T3) => Boolean): XStream[(T1, T2, T3), E] =
-      tupleStream.filter(passes.tupled)
+      tupleStream.filterJs(passes.tupled)
 
     @inline def debug(spy: (T1, T2, T3) => Any): XStream[(T1, T2, T3), E] =
-      tupleStream.debug(spy.tupled)
+      tupleStream.debugJs(spy.tupled)
   }
 
   implicit class TupleStream4[+T1, +T2, +T3, +T4, +E](val tupleStream: XStream[(T1, T2, T3, T4), E]) extends AnyVal {
@@ -75,9 +89,9 @@ package object xstream {
       tupleStream.mapJs(project.tupled)
 
     @inline def filter(passes: (T1, T2, T3, T4) => Boolean): XStream[(T1, T2, T3, T4), E] =
-      tupleStream.filter(passes.tupled)
+      tupleStream.filterJs(passes.tupled)
 
     @inline def debug(spy: (T1, T2, T3, T4) => Any): XStream[(T1, T2, T3, T4), E] =
-      tupleStream.debug(spy.tupled)
+      tupleStream.debugJs(spy.tupled)
   }
 }
