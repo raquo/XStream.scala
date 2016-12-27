@@ -7,60 +7,59 @@ import scala.scalajs.js.|
 
 /** @see https://github.com/staltz/xstream */
 @js.native
-trait XStream[+T] extends js.Object {
+trait XStream[+T, +E] extends js.Object {
 
-  def addListener(listener: Listener[T]): Unit = js.native
+  def addListener(listener: Listener[T, E]): Unit = js.native
 
-  def removeListener(listener: Listener[T]): Unit = js.native
+  def removeListener(listener: Listener[T, E]): Unit = js.native
 
-  def subscribe[U >: T](listener: Listener[U]): Subscription[U] = js.native
+  def subscribe[T2 >: T, E2 >: E](listener: Listener[T2, E2]): Subscription[T2, E2] = js.native
 
   @JSName("map")
-  def mapJs[U](project: js.Function1[T, U]): XStream[U] = js.native
+  def mapJs[U](project: js.Function1[T, U]): XStream[U, E] = js.native
 
-  def mapTo[U](projectedValue: U): XStream[U] = js.native
+  def mapTo[U](projectedValue: U): XStream[U, E] = js.native
 
-  def filter(passes: js.Function1[T, Boolean]): XStream[T] = js.native
+  def filter(passes: js.Function1[T, Boolean]): XStream[T, E] = js.native
 
-  def take(amount: Int): XStream[T] = js.native
+  def take(amount: Int): XStream[T, E] = js.native
 
-  def drop(amount: Int): XStream[T] = js.native
+  def drop(amount: Int): XStream[T, E] = js.native
 
-  def last(): XStream[T] = js.native
+  def last(): XStream[T, E] = js.native
 
-  def startWith[U >: T](initial: U): MemoryStream[U] = js.native
+  def startWith[U >: T](initial: U): MemoryStream[U, E] = js.native
 
-  def endWhen(other: XStream[_]): XStream[T] = js.native
+  def endWhen(other: XStream[_, _]): XStream[T, E] = js.native
 
-  def fold[R](accumulate: js.Function2[R, T, R], seed: R): MemoryStream[R] = js.native
+  def fold[R](accumulate: js.Function2[R, T, R], seed: R): MemoryStream[R, E] = js.native
 
-  // @TODO should `E` type exist here? In Typescript it's `any`
-  def replaceError[E, U >: T](replace: js.Function1[E, XStream[U]]): XStream[U] = js.native
+  def replaceError[U >: T, E2](replace: js.Function1[E, XStream[U, E2]]): XStream[U, E2] = js.native
 
   @JSName("flatten")
-  private[xstream] def flattenJs[R](): XStream[R] = js.native
+  private[xstream] def flattenJs[T2, E2](): XStream[T2, E2] = js.native
 
-  def compose[U](operator: js.Function1[XStream[T], XStream[U]]): XStream[U] = js.native
+  def compose[U, E2](operator: js.Function1[XStream[T, E], XStream[U, E2]]): XStream[U, E2] = js.native
 
-  def compose[U](operator: js.Function1[XStream[T], MemoryStream[U]]): MemoryStream[U] = js.native
+  def compose[U, E2](operator: js.Function1[XStream[T, E2], MemoryStream[U, E2]]): MemoryStream[U, E2] = js.native
 
-  def remember(): MemoryStream[T] = js.native
+  def remember(): MemoryStream[T, E] = js.native
 
-  def debug(spy: js.Function1[T, Any]): XStream[T] = js.native
+  def debug(spy: js.Function1[T, Any]): XStream[T, E] = js.native
 
-  def debug(label: String): XStream[T] = js.native
+  def debug(label: String): XStream[T, E] = js.native
 
-  def debug(): XStream[T] = js.native
+  def debug(): XStream[T, E] = js.native
 
-  def imitate[U >: T](target: XStream[U]): Unit = js.native
+  def imitate[U >: T, E2 >: E](target: XStream[U, E2]): Unit = js.native
 
   private[xstream] def shamefullySendNext[U >: T](value: U): Unit = js.native
 
-  private[xstream] def shamefullySendError[E](error: E): Unit = js.native
+  private[xstream] def shamefullySendError[E2 >: E](error: E2): Unit = js.native
 
   private[xstream] def shamefullySendComplete(): Unit = js.native
 
-  def setDebugListener(listener: Listener[T]): Unit = js.native
+  def setDebugListener(listener: Listener[T, E]): Unit = js.native
 }
 
 /** @see https://github.com/staltz/xstream */
@@ -70,72 +69,80 @@ object XStream {
 
   // Simple streams
 
-  @inline def of[T](value: T): XStream[T] =
+  @inline def of[T, E](value: T): XStream[T, E] =
     RawXStream.of(value)
 
-  @inline def never(): XStream[Nothing] =
+  @inline def never(): XStream[Nothing, Nothing] =
     RawXStream.never()
 
-  @inline def empty(): XStream[Nothing] =
+  @inline def empty(): XStream[Nothing, Nothing] =
     RawXStream.empty()
 
-  @inline def throwError[T](error: T): XStream[T] =
+  @inline def throwError[E](error: E): XStream[Nothing, E] =
     RawXStream.`throw`(error)
 
-  @inline def periodic(period: Int): XStream[Int] =
+  @inline def periodic(period: Int): XStream[Int, Nothing] =
     RawXStream.periodic(period)
 
   // create & createWithMemory
 
-  @inline def create[T](): XStream[T] =
-    RawXStream.create[T]()
+  @inline def create[T, E](): XStream[T, E] =
+    RawXStream.create()
 
-  @inline def create[T](producer: Producer[T]): XStream[T] =
-    RawXStream.create[T](producer)
+  @inline def create[T, E](producer: Producer[T, E]): XStream[T, E] =
+    RawXStream.create(producer)
 
-  @inline def createWithMemory[T](): MemoryStream[T] =
-    RawXStream.createWithMemory[T]()
+  @inline def createWithMemory[T, E](): MemoryStream[T, E] =
+    RawXStream.createWithMemory()
 
-  @inline def createWithMemory[T](producer: Producer[T]): MemoryStream[T] =
-    RawXStream.createWithMemory[T](producer)
+  @inline def createWithMemory[T, E](producer: Producer[T, E]): MemoryStream[T, E] =
+    RawXStream.createWithMemory(producer)
 
   // from<X>
 
-  @inline def fromSeq[T](seq: Seq[T]): XStream[T] =
+  @inline def fromSeq[T](seq: Seq[T]): XStream[T, Nothing] =
     RawXStream.fromArray(seq.toJSArray)
 
-  @inline def fromPromise[T](promise: js.Promise[T]): XStream[T] =
+  @inline def fromPromise[T, E](promise: js.Promise[T]): XStream[T, E] =
     RawXStream.fromPromise(promise)
 
-  @inline def fromJSArray[T](array: js.Array[T]): XStream[T] =
+  @inline def fromJSArray[T](array: js.Array[T]): XStream[T, Nothing] =
     RawXStream.fromArray(array)
 
   //  @inline def fromJsObservable[T](observable: Any): Stream[T] = js.native // @TODO ES6 observable?
 
   // Merge
 
-  @inline def merge[T](streams: XStream[T]*): XStream[T] =
+  @inline def merge[T, E](streams: XStream[T, E]*): XStream[T, E] =
     RawXStream.merge(streams: _*)
 
   // Combine
 
-  @inline def combine[T1, T2](
-    stream1: XStream[T1], stream2: XStream[T2]
-  ): XStream[(T1, T2)] =
+  // @TODO[API] How can we allow for different kinds of errors?
+
+  @inline def combine[T1, T2, E](
+    stream1: XStream[T1, E],
+    stream2: XStream[T2, E]
+  ): XStream[(T1, T2), E] =
     RawXStream
       .combine(stream1, stream2)
       .mapJs(JSArrayToTuple2[T1, T2] _)
 
-  @inline def combine[T1, T2, T3](
-    stream1: XStream[T1], stream2: XStream[T2], stream3: XStream[T3]
-  ): XStream[(T1, T2, T3)] =
+  @inline def combine[T1, T2, T3, E](
+    stream1: XStream[T1, E],
+    stream2: XStream[T2, E],
+    stream3: XStream[T3, E]
+  ): XStream[(T1, T2, T3), E] =
     RawXStream
       .combine(stream1, stream2, stream3)
       .mapJs(JSArrayToTuple3[T1, T2, T3] _)
 
-  @inline def combine[T1, T2, T3, T4](
-    stream1: XStream[T1], stream2: XStream[T2], stream3: XStream[T3], stream4: XStream[T4]
-  ): XStream[(T1, T2, T3, T4)] =
+  @inline def combine[T1, T2, T3, T4, E](
+    stream1: XStream[T1, E],
+    stream2: XStream[T2, E],
+    stream3: XStream[T3, E],
+    stream4: XStream[T4, E]
+  ): XStream[(T1, T2, T3, T4), E] =
     RawXStream
       .combine(stream1, stream2, stream3, stream4)
       .mapJs(JSArrayToTuple4[T1, T2, T3, T4] _)

@@ -8,11 +8,11 @@ import scala.scalajs.js.annotation.ScalaJSDefined
 // @TODO[API] change this to object method somehow? Should this be a value class?
 
 @ScalaJSDefined
-trait Listener[-T] extends js.Object {
+trait Listener[-T, -E] extends js.Object {
 
   val next: js.Function1[T, Unit]
 
-  val error: js.Function1[Any, Unit] // Any should be E
+  val error: js.Function1[E, Unit]
 
   val complete: js.Function0[Unit]
 }
@@ -25,38 +25,38 @@ object Listener {
 
   private[xstream] def noop1[T](x: T): Unit = ()
 
-  def apply[T](
+  def apply[T, E](
     maybeNext: Option[T => Unit],
-    maybeError: Option[Any => Unit],
+    maybeError: Option[E => Unit],
     maybeComplete: Option[() => Unit]
-  ): Listener[T] = new Listener[T] {
+  ): Listener[T, E] = new Listener[T, E] {
     override val next: js.Function1[T, Unit] = js.Any.fromFunction1(maybeNext.getOrElse(noop1[T]))
-    override val error: js.Function1[Any, Unit] = js.Any.fromFunction1(maybeError.getOrElse(noop1[Any]))
+    override val error: js.Function1[E, Unit] = js.Any.fromFunction1(maybeError.getOrElse(noop1[E]))
     override val complete: js.Function0[Unit] = js.Any.fromFunction0(maybeComplete.getOrElse(noop0))
   }
 
-  def create[T](onNext: T => Unit): Listener[T] = new Listener[T] {
+  def create[T, E](onNext: T => Unit): Listener[T, E] = new Listener[T, E] {
     override val next: js.Function1[T, Unit] = onNext
-    override val error: js.Function1[Any, Unit] = noop1 _
+    override val error: js.Function1[E, Unit] = noop1 _
     override val complete: js.Function0[Unit] = js.Any.fromFunction0(noop0)
   }
 
   // TODO: This should have error type
-  def create[T](onNext: T => Unit, onError: Any => Unit): Listener[T] = new Listener[T] {
+  def create[T, E](onNext: T => Unit, onError: Any => Unit): Listener[T, E] = new Listener[T, E] {
     override val next: js.Function1[T, Unit] = onNext
-    override val error: js.Function1[Any, Unit] = onError
+    override val error: js.Function1[E, Unit] = onError
     override val complete: js.Function0[Unit] = js.Any.fromFunction0(noop0)
   }
 
-  def create[T](onNext: T => Unit, onComplete: () => Unit): Listener[T] = new Listener[T] {
+  def create[T, E](onNext: T => Unit, onComplete: () => Unit): Listener[T, E] = new Listener[T, E] {
     override val next: js.Function1[T, Unit] = onNext
-    override val error: js.Function1[Any, Unit] = noop1 _
+    override val error: js.Function1[E, Unit] = noop1 _
     override val complete: js.Function0[Unit] = onComplete
   }
 
-  def create[T](onNext: T => Unit, onError: Any => Unit, onComplete: () => Unit): Listener[T] = new Listener[T] {
+  def create[T, E](onNext: T => Unit, onError: E => Unit, onComplete: () => Unit): Listener[T, E] = new Listener[T, E] {
     override val next: js.Function1[T, Unit] = onNext
-    override val error: js.Function1[Any, Unit] = onError
+    override val error: js.Function1[E, Unit] = onError
     override val complete: js.Function0[Unit] = onComplete
   }
 }

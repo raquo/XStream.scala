@@ -4,20 +4,20 @@ import scala.scalajs.js
 import scala.scalajs.js.annotation.ScalaJSDefined
 
 @ScalaJSDefined
-trait Producer[T] extends js.Object {
+trait Producer[T, E] extends js.Object {
 
-  def start: js.Function1[Listener[T], Unit]
+  def start: js.Function1[Listener[T, E], Unit]
 
   def stop: js.Function0[Unit]
 }
 
 object Producer {
 
-  def apply[T](
-    onStart: Listener[T] => Unit,
+  def apply[T, E](
+    onStart: Listener[T, E] => Unit,
     onStop: () => Unit
-  ): Producer[T] = new Producer[T] {
-    override def start: js.Function1[Listener[T], Unit] = onStart
+  ): Producer[T, E] = new Producer[T, E] {
+    override def start: js.Function1[Listener[T, E], Unit] = onStart
     override def stop: js.Function0[Unit] = onStop
   }
 }

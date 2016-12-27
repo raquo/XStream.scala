@@ -8,41 +8,61 @@ import scala.scalajs.js.|
 @JSImport("xstream", JSImport.Default)
 object RawXStream extends js.Object {
 
-  def create[T](producer: Producer[T]): XStream[T] = js.native
+  def create[T, E](producer: Producer[T, E]): XStream[T, E] = js.native
 
-  def create[T](): XStream[T] = js.native
+  def create[T, E](): XStream[T, E] = js.native
 
-  def createWithMemory[T](producer: js.UndefOr[Producer[T]] = js.undefined): MemoryStream[T] = js.native
+  def createWithMemory[T, E](): MemoryStream[T, E] = js.native
 
-  def never(): XStream[Nothing] = js.native // @TODO is Nothing a correct type?
+  def createWithMemory[T, E](producer: Producer[T, E]): MemoryStream[T, E] = js.native
 
-  def empty(): XStream[Nothing] = js.native // @TODO is Nothing a correct type?
+  def never(): XStream[Nothing, Nothing] = js.native
 
-  def `throw`[E](error: E): XStream[E] = js.native
+  def empty(): XStream[Nothing, Nothing] = js.native
 
-  def of[T](values: T*): XStream[T] = js.native // @TODO is this correct signature for TS `(...items: Array<T>)`?
+  def `throw`[E](error: E): XStream[Nothing, E] = js.native
 
-  def fromArray[T](array: js.Array[T]): XStream[T] = js.native
+  def of[T](values: T*): XStream[T, Nothing] = js.native // @TODO is this correct signature for TS `(...items: Array<T>)`?
 
-  def fromPromise[T](promise: js.Promise[T]): XStream[T] = js.native
+  def fromArray[T, E](array: js.Array[T]): XStream[T, Nothing] = js.native
 
-  def fromObservable[T](observable: Any): XStream[T] = js.native // @TODO What observable? Why??
+  def fromPromise[T, E](promise: js.Promise[T]): XStream[T, E] = js.native
 
-  def periodic(period: Int): XStream[Int] = js.native
+  def fromObservable[T, E](observable: Any): XStream[T, E] = js.native // @TODO What observable? Why??
 
-  def merge[T](streams: XStream[T]*): XStream[T] = js.native
+  def periodic(period: Int): XStream[Int, Nothing] = js.native
 
-  def merge[T](streams: js.Array[XStream[T]]): XStream[T] = js.native // @TODO does this do what I think it does?
+  def merge[T, E](streams: XStream[T, E]*): XStream[T, E] = js.native
+
+  def merge[T, E](streams: js.Array[XStream[T, E]]): XStream[T, E] = js.native // @TODO does this do what I think it does?
 
   // @TODO Add up to... 8? variations
 
-  def combine[T](streams: XStream[T]*): XStream[js.Array[T]] = js.native // @TODO does this do what I think it does?
+  def combine[T, E](streams: XStream[T, E]*): XStream[js.Array[T], E] = js.native // @TODO does this do what I think it does?
 
-  def combine[T1, T2](stream1: XStream[T1], stream2: XStream[T2]): XStream[js.Array[T1 | T2]] = js.native
+  def combine[T1, T2, E](
+    stream1: XStream[T1, E],
+    stream2: XStream[T2, E]
+  ): XStream[js.Array[T1 | T2], E] = js.native
 
-  def combine[T1, T2, T3](stream1: XStream[T1], stream2: XStream[T2], stream3: XStream[T3]): XStream[js.Array[T1 | T2 | T3]] = js.native
+  def combine[T1, T2, T3, E](
+    stream1: XStream[T1, E],
+    stream2: XStream[T2, E],
+    stream3: XStream[T3, E]
+  ): XStream[js.Array[T1 | T2 | T3], E] = js.native
 
-  def combine[T1, T2, T3, T4](stream1: XStream[T1], stream2: XStream[T2], stream3: XStream[T3], stream4: XStream[T4]): XStream[js.Array[T1 | T2 | T3 | T4]] = js.native
+  def combine[T1, T2, T3, T4, E](
+    stream1: XStream[T1, E],
+    stream2: XStream[T2, E],
+    stream3: XStream[T3, E],
+    stream4: XStream[T4, E]
+  ): XStream[js.Array[T1 | T2 | T3 | T4], E] = js.native
 
-  def combine[T1, T2, T3, T4, T5](stream1: XStream[T1], stream2: XStream[T2], stream3: XStream[T3], stream4: XStream[T4], stream5: XStream[T5]): XStream[js.Array[T1 | T2 | T3 | T4 | T5]] = js.native
+  def combine[T1, T2, T3, T4, T5, E](
+    stream1: XStream[T1, E],
+    stream2: XStream[T2, E],
+    stream3: XStream[T3, E],
+    stream4: XStream[T4, E],
+    stream5: XStream[T5, E]
+  ): XStream[js.Array[T1 | T2 | T3 | T4 | T5], E] = js.native
 }
