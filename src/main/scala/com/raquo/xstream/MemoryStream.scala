@@ -4,7 +4,7 @@ import scala.scalajs.js
 import scala.scalajs.js.annotation.JSName
 
 @js.native
-trait MemoryStream[+T, +E] extends XStream[T, E] {
+trait MemoryStream[+T, +E <: js.Error] extends XStream[T, E] {
 
   @JSName("map")
   override def mapJs[U](project: js.Function1[T, U]): MemoryStream[U, E] = js.native
@@ -16,7 +16,7 @@ trait MemoryStream[+T, +E] extends XStream[T, E] {
   override def endWhen(other: XStream[_, _]): MemoryStream[T, E] = js.native
 
   @JSName("replaceError")
-  override def replaceErrorJs[U >: T, E2](
+  override def replaceErrorJs[U >: T, E2 <: js.Error](
     replace: js.Function1[E, XStream[U, E2]]
   ): MemoryStream[T, E2] = js.native
 

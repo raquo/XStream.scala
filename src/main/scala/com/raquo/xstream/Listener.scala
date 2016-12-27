@@ -4,7 +4,7 @@ import scala.scalajs.js
 import scala.scalajs.js.annotation.ScalaJSDefined
 
 @ScalaJSDefined
-trait Listener[-T, -E] extends js.Object {
+trait Listener[-T, -E <: js.Error] extends js.Object {
 
   val next: js.Function1[T, Unit]
 
@@ -21,7 +21,7 @@ object Listener {
 
   private[xstream] def noop1[T](x: T): Unit = ()
 
-  def apply[T, E](
+  def apply[T, E <: js.Error](
     onNext: T => Unit = noop1[T] _,
     onError: E => Unit = noop1[E] _,
     onComplete: () => Unit = noop0

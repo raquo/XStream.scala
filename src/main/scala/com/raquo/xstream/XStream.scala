@@ -7,13 +7,13 @@ import scala.scalajs.js.|
 
 /** @see https://github.com/staltz/xstream */
 @js.native
-trait XStream[+T, +E] extends js.Object {
+trait XStream[+T, +E <: js.Error] extends js.Object {
 
   def addListener(listener: Listener[T, E]): Unit = js.native
 
   def removeListener(listener: Listener[T, E]): Unit = js.native
 
-  def subscribe[T2 >: T, E2 >: E](listener: Listener[T2, E2]): Subscription[T2, E2] = js.native
+  def subscribe[T2 >: T, E2 >: E <: js.Error](listener: Listener[T2, E2]): Subscription[T2, E2] = js.native
 
   @JSName("map")
   def mapJs[U](project: js.Function1[T, U]): XStream[U, E] = js.native
@@ -37,14 +37,14 @@ trait XStream[+T, +E] extends js.Object {
   def foldJs[R](accumulate: js.Function2[R, T, R], seed: R): MemoryStream[R, E] = js.native
 
   @JSName("replaceError")
-  def replaceErrorJs[U >: T, E2](replace: js.Function1[E, XStream[U, E2]]): XStream[U, E2] = js.native
+  def replaceErrorJs[U >: T, E2 <: js.Error](replace: js.Function1[E, XStream[U, E2]]): XStream[U, E2] = js.native
 
   /** This is private because it works only on streams of streams. See [[MetaStream.flatten]] */
   @JSName("flatten")
-  private[xstream] def flattenJs[T2, E2](): XStream[T2, E2] = js.native
+  private[xstream] def flattenJs[T2, E2 <: js.Error](): XStream[T2, E2] = js.native
 
   @JSName("compose")
-  def composeJs[T2, E2, ResultStream <: XStream[T2, E2]](
+  def composeJs[T2, E2 <: js.Error, ResultStream <: XStream[T2, E2]](
     operator: js.Function1[XStream[T, E], ResultStream]
   ): ResultStream = js.native
 
@@ -57,11 +57,11 @@ trait XStream[+T, +E] extends js.Object {
 
   def debug(): XStream[T, E] = js.native
 
-  def imitate[U >: T, E2 >: E](target: XStream[U, E2]): Unit = js.native
+  def imitate[U >: T, E2 >: E <: js.Error](target: XStream[U, E2]): Unit = js.native
 
   private[xstream] def shamefullySendNext[U >: T](value: U): Unit = js.native
 
-  private[xstream] def shamefullySendError[E2 >: E](error: E2): Unit = js.native
+  private[xstream] def shamefullySendError[E2 >: E <: js.Error](error: E2): Unit = js.native
 
   private[xstream] def shamefullySendComplete(): Unit = js.native
 
@@ -75,7 +75,7 @@ object XStream {
 
   // Simple streams
 
-  @inline def of[T, E](value: T): XStream[T, E] =
+  @inline def of[T, E <: js.Error](value: T): XStream[T, E] =
     RawXStream.of(value)
 
   @inline def never(): XStream[Nothing, Nothing] =
@@ -84,7 +84,7 @@ object XStream {
   @inline def empty(): XStream[Nothing, Nothing] =
     RawXStream.empty()
 
-  @inline def throwError[E](error: E): XStream[Nothing, E] =
+  @inline def throwError[E <: js.Error](error: E): XStream[Nothing, E] =
     RawXStream.`throw`(error)
 
   @inline def periodic(period: Int): XStream[Int, Nothing] =
@@ -92,16 +92,16 @@ object XStream {
 
   // create & createWithMemory
 
-  @inline def create[T, E](): XStream[T, E] =
+  @inline def create[T, E <: js.Error](): XStream[T, E] =
     RawXStream.create()
 
-  @inline def create[T, E](producer: Producer[T, E]): XStream[T, E] =
+  @inline def create[T, E <: js.Error](producer: Producer[T, E]): XStream[T, E] =
     RawXStream.create(producer)
 
-  @inline def createWithMemory[T, E](): MemoryStream[T, E] =
+  @inline def createWithMemory[T, E <: js.Error](): MemoryStream[T, E] =
     RawXStream.createWithMemory()
 
-  @inline def createWithMemory[T, E](producer: Producer[T, E]): MemoryStream[T, E] =
+  @inline def createWithMemory[T, E <: js.Error](producer: Producer[T, E]): MemoryStream[T, E] =
     RawXStream.createWithMemory(producer)
 
   // from<X>
@@ -109,7 +109,7 @@ object XStream {
   @inline def fromSeq[T](seq: Seq[T]): XStream[T, Nothing] =
     RawXStream.fromArray(seq.toJSArray)
 
-  @inline def fromPromise[T, E](promise: js.Promise[T]): XStream[T, E] =
+  @inline def fromPromise[T, E <: js.Error](promise: js.Promise[T]): XStream[T, E] =
     RawXStream.fromPromise(promise)
 
   @inline def fromJSArray[T](array: js.Array[T]): XStream[T, Nothing] =
@@ -119,14 +119,14 @@ object XStream {
 
   // Merge
 
-  @inline def merge[T, E](streams: XStream[T, E]*): XStream[T, E] =
+  @inline def merge[T, E <: js.Error](streams: XStream[T, E]*): XStream[T, E] =
     RawXStream.merge(streams: _*)
 
   // Combine
 
   // @TODO[API] How can we allow for different kinds of errors?
 
-  @inline def combine[T1, T2, E](
+  @inline def combine[T1, T2, E <: js.Error](
     stream1: XStream[T1, E],
     stream2: XStream[T2, E]
   ): XStream[(T1, T2), E] =
@@ -134,7 +134,7 @@ object XStream {
       .combine(stream1, stream2)
       .mapJs(JSArrayToTuple2[T1, T2] _)
 
-  @inline def combine[T1, T2, T3, E](
+  @inline def combine[T1, T2, T3, E <: js.Error](
     stream1: XStream[T1, E],
     stream2: XStream[T2, E],
     stream3: XStream[T3, E]
@@ -143,7 +143,7 @@ object XStream {
       .combine(stream1, stream2, stream3)
       .mapJs(JSArrayToTuple3[T1, T2, T3] _)
 
-  @inline def combine[T1, T2, T3, T4, E](
+  @inline def combine[T1, T2, T3, T4, E <: js.Error](
     stream1: XStream[T1, E],
     stream2: XStream[T2, E],
     stream3: XStream[T3, E],

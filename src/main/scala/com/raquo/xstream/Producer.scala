@@ -4,7 +4,7 @@ import scala.scalajs.js
 import scala.scalajs.js.annotation.ScalaJSDefined
 
 @ScalaJSDefined
-trait Producer[T, E] extends js.Object {
+trait Producer[T, E <: js.Error] extends js.Object {
 
   def start: js.Function1[Listener[T, E], Unit]
 
@@ -13,7 +13,7 @@ trait Producer[T, E] extends js.Object {
 
 object Producer {
 
-  def apply[T, E](
+  def apply[T, E <: js.Error](
     onStart: Listener[T, E] => Unit,
     onStop: () => Unit
   ): Producer[T, E] = new Producer[T, E] {
