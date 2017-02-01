@@ -2,15 +2,20 @@ package com.raquo.xstream
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.ScalaJSDefined
+import scala.scalajs.js.|
 
 @ScalaJSDefined
-trait Listener[-T, -E <: js.Error] extends js.Object {
+trait Listener[-T, -EE <: Exception] extends js.Object {
 
-  val next: js.Function1[T, Unit]
+  def next(value: T): Unit
 
-  val error: js.Function1[E, Unit]
+  // @TODO[Integrity] Will Scala.js route into these two methods correctly?
 
-  val complete: js.Function0[Unit]
+  def error(error: EE): Unit
+
+  def error(error: Exception | js.Error): Unit
+
+  def complete(): Unit
 }
 
 object Listener {
@@ -21,13 +26,15 @@ object Listener {
 
   private[xstream] def noop1[T](x: T): Unit = ()
 
-  def apply[T, E <: js.Error](
+  def apply[T, EE <: Exception](
     onNext: T => Unit = noop1[T] _,
-    onError: E => Unit = noop1[E] _,
+    onExpectedError: EE => Unit = noop1[EE] _,
+    onUnexpectedError: Exception | js.Error => Unit = noop1[Exception | js.Error] _,
     onComplete: () => Unit = noop0
-  ): Listener[T, E] = new Listener[T, E] {
-    override val next: js.Function1[T, Unit] = onNext
-    override val error: js.Function1[E, Unit] = onError
-    override val complete: js.Function0[Unit] = onComplete
+  ): Listener[T, EE] = new Listener[T, EE] {
+    override def next(value: T): Unit = onNext(value)
+    override def error(error: EE): Unit = onExpectedError(error)
+    override def error(error: Exception | js.Error): Unit = onUnexpectedError(error)
+    override def complete(): Unit = onComplete()
   }
 }

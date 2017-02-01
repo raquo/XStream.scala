@@ -1,15 +1,21 @@
 package com.raquo.xstream
 
-import scala.scalajs.js
-
 object OptionalImplicits {
 
-  implicit class ShamefulStream[+T, +E <: js.Error](val shamelessStream: XStream[T, E]) extends AnyVal {
+  // @TODO[API] this should not be implicit!
 
-    def shamefullySendNext[U >: T](value: U): Unit = shamelessStream.shamefullySendNext(value)
+  implicit class ShamefulStream[T, EE <: Exception](val shamelessStream: XStream[T, EE]) extends AnyVal {
 
-    def shamefullySendError[E2 >: E <: js.Error](error: E2): Unit = shamelessStream.shamefullySendError(error)
+    def shamefullySendNext(value: T): Unit = {
+      shamelessStream.shamefullySendNext(value)
+    }
 
-    def shamefullySendComplete(): Unit = shamelessStream.shamefullySendComplete()
+    def shamefullySendError(error: EE): Unit = {
+      shamelessStream.shamefullySendError(error)
+    }
+
+    def shamefullySendComplete(): Unit = {
+      shamelessStream.shamefullySendComplete()
+    }
   }
 }

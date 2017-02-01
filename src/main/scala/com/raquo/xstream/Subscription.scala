@@ -3,11 +3,11 @@ package com.raquo.xstream
 import scala.scalajs.js
 
 @js.native
-trait Subscription[T, E <: js.Error] extends js.Object {
+trait Subscription[T, EE <: Exception] extends js.Object {
 
-  private val _stream: XStream[T, E] = js.native
+  private val _stream: XStream[T, EE] = js.native
 
-  private val _listener: Listener[T, E] = js.native
+  private val _listener: Listener[T, EE] = js.native
 
   def unsubscribe(): Unit = js.native
 }

@@ -4,20 +4,22 @@ import scala.scalajs.js
 import scala.scalajs.js.annotation.ScalaJSDefined
 
 @ScalaJSDefined
-trait Producer[T, E <: js.Error] extends js.Object {
+trait Producer[T, EE <: Exception] extends js.Object {
 
-  def start: js.Function1[Listener[T, E], Unit]
+  // @TODO What's the meaning of this?
 
-  def stop: js.Function0[Unit]
+  def start(listener: Listener[T, EE]): Unit
+
+  def stop(): Unit
 }
 
 object Producer {
 
-  def apply[T, E <: js.Error](
-    onStart: Listener[T, E] => Unit,
+  def apply[T, EE <: Exception](
+    onStart: Listener[T, EE] => Unit,
     onStop: () => Unit
-  ): Producer[T, E] = new Producer[T, E] {
-    override def start: js.Function1[Listener[T, E], Unit] = onStart
-    override def stop: js.Function0[Unit] = onStop
+  ): Producer[T, EE] = new Producer[T, EE] {
+    override def start(listener: Listener[T, EE]): Unit = onStart(listener)
+    override def stop(): Unit = onStop()
   }
 }
