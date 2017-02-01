@@ -21,13 +21,13 @@ package object xstream {
     @inline def subscribe[T2 >: T, EE2 >: EE <: Exception](listener: Listener[T2, EE2]): Subscription[T2, EE2] =
       stream.subscribe(listener)
 
-    @inline def map[U](project: T => U): XStream[U, EE] = stream.mapJs(project)
+    @inline def map[U](project: T => U): XStream[U, EE] = stream.jsMap(project)
 
     @inline def filter(passes: T => Boolean): XStream[T, EE] =
       stream.filterJs(passes)
 
     @inline def fold[R](accumulate: (R, T) => R, seed: R): MemoryStream[R, EE] =
-      stream.foldJs(accumulate, seed)
+      stream.jsFold(accumulate, seed)
 
     // @TODO[Elegance] Simplify this – remove classTag, just check for js.Error
 
@@ -36,7 +36,7 @@ package object xstream {
       replace: ExpErr => XStream[T2, Nothing]
     ): XStream[T2, Nothing] = {
       val expectedErrorClass = implicitly[ClassTag[ExpErr]].runtimeClass
-      stream.replaceAllErrorsJs((error: Exception | js.Error) => {
+      stream.jsReplaceAllErrors((error: Exception | js.Error) => {
         if (expectedErrorClass.isInstance(error)) {
           replace(error.asInstanceOf[ExpErr])
         } else {
@@ -49,13 +49,13 @@ package object xstream {
     @inline def replaceAllErrors[T2 >: T](
       replace: Exception | js.Error => XStream[T2, Nothing]
     ): XStream[T2, Nothing] = {
-      stream.replaceAllErrorsJs(replace)
+      stream.jsReplaceAllErrors(replace)
     }
 
     @inline def compose[T2, EE2 <: Exception, ResultStream <: XStream[T2, EE2]](
       operator: XStream[T, EE] => ResultStream
     ): ResultStream = {
-      stream.composeJs[T2, EE2, ResultStream]((thisStream: XStream[T, EE]) => operator(thisStream))
+      stream.jsCompose[T2, EE2, ResultStream]((thisStream: XStream[T, EE]) => operator(thisStream))
     }
 
     @inline def debug(spy: T => Unit): XStream[T, EE] =
@@ -73,12 +73,12 @@ package object xstream {
   ) extends AnyVal {
 
     @inline def map[U](project: T => U): MemoryStream[U, EE] =
-      memoryStream.mapJs(project)
+      memoryStream.jsMap(project)
 
     @inline def replaceAllErrors[T2 >: T](
       replace: Exception | js.Error => XStream[T2, Nothing]
     ): MemoryStream[T2, Nothing] = {
-      memoryStream.replaceAllErrorsJs(replace)
+      memoryStream.jsReplaceAllErrors(replace)
     }
 
     @inline def debug(spy: T => Any): MemoryStream[T, EE] =
@@ -90,7 +90,7 @@ package object xstream {
     val streamOfStreams: XStream[XStream[T, EE], Nothing]
   ) extends AnyVal {
 
-    @inline def flatten: XStream[T, EE] = streamOfStreams.flattenJs[T, EE]()
+    @inline def flatten: XStream[T, EE] = streamOfStreams.jsFlatten[T, EE]()
   }
 
   implicit class TupleStream2[+T1, +T2, +EE <: Exception] (
@@ -98,7 +98,7 @@ package object xstream {
   ) extends AnyVal {
 
     @inline def map[U](project: (T1, T2) => U): XStream[U, EE] =
-      tupleStream.mapJs(project.tupled)
+      tupleStream.jsMap(project.tupled)
 
     @inline def filter(passes: (T1, T2) => Boolean): XStream[(T1, T2), EE] =
       tupleStream.filterJs(passes.tupled)
@@ -112,7 +112,7 @@ package object xstream {
   ) extends AnyVal {
 
     @inline def map[U](project: (T1, T2, T3) => U): XStream[U, EE] =
-      tupleStream.mapJs(project.tupled)
+      tupleStream.jsMap(project.tupled)
 
     @inline def filter(passes: (T1, T2, T3) => Boolean): XStream[(T1, T2, T3), EE] =
       tupleStream.filterJs(passes.tupled)
@@ -126,7 +126,7 @@ package object xstream {
   ) extends AnyVal {
 
     @inline def map[U](project: (T1, T2, T3, T4) => U): XStream[U, EE] =
-      tupleStream.mapJs(project.tupled)
+      tupleStream.jsMap(project.tupled)
 
     @inline def filter(passes: (T1, T2, T3, T4) => Boolean): XStream[(T1, T2, T3, T4), EE] =
       tupleStream.filterJs(passes.tupled)

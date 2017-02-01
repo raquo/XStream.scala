@@ -16,7 +16,7 @@ trait XStream[+T, +EE <: Exception] extends js.Object {
   def subscribe[T2 >: T, EE2 >: EE <: Exception](listener: Listener[T2, EE2]): Subscription[T2, EE2] = js.native
 
   @JSName("map")
-  def mapJs[U](project: js.Function1[T, U]): XStream[U, EE] = js.native
+  def jsMap[U](project: js.Function1[T, U]): XStream[U, EE] = js.native
 
   def mapTo[U](projectedValue: U): XStream[U, EE] = js.native
 
@@ -34,23 +34,21 @@ trait XStream[+T, +EE <: Exception] extends js.Object {
   def endWhen(other: XStream[_, _]): XStream[T, EE] = js.native
 
   @JSName("fold")
-  def foldJs[R](accumulate: js.Function2[R, T, R], seed: R): MemoryStream[R, EE] = js.native
+  def jsFold[R](accumulate: js.Function2[R, T, R], seed: R): MemoryStream[R, EE] = js.native
 
   // @TODO add withExpectedError[ErrorType] method
 
-  // @TODO API
   @JSName("replaceError")
-  def replaceAllErrorsJs[U >: T](
+  def jsReplaceAllErrors[U >: T](
     replace: js.Function1[Exception | js.Error, XStream[U, Nothing]]
   ): XStream[U, Nothing] = js.native
 
   /** This is private because it works only on streams of streams. See [[MetaStream.flatten]] */
   @JSName("flatten")
-  private[xstream] def flattenJs[T2, EE2 <: Exception](): XStream[T2, EE2] = js.native
+  private[xstream] def jsFlatten[T2, EE2 <: Exception](): XStream[T2, EE2] = js.native
 
-  // @TODO[API] Rename *Js methods to js* for better auto-completion
   @JSName("compose")
-  def composeJs[T2, EE2 <: Exception, ResultStream <: XStream[T2, EE2]](
+  def jsCompose[T2, EE2 <: Exception, ResultStream <: XStream[T2, EE2]](
     operator: js.Function1[XStream[T, EE], ResultStream]
   ): ResultStream = js.native
 
@@ -142,7 +140,7 @@ object XStream {
   ): XStream[(T1, T2), EE] =
     RawXStream
       .combine(stream1, stream2)
-      .mapJs(JSArrayToTuple2[T1, T2] _)
+      .jsMap(JSArrayToTuple2[T1, T2] _)
 
   @inline def combine[T1, T2, T3, EE <: Exception](
     stream1: XStream[T1, EE],
@@ -151,7 +149,7 @@ object XStream {
   ): XStream[(T1, T2, T3), EE] =
     RawXStream
       .combine(stream1, stream2, stream3)
-      .mapJs(JSArrayToTuple3[T1, T2, T3] _)
+      .jsMap(JSArrayToTuple3[T1, T2, T3] _)
 
   @inline def combine[T1, T2, T3, T4, EE <: Exception](
     stream1: XStream[T1, EE],
@@ -161,7 +159,7 @@ object XStream {
   ): XStream[(T1, T2, T3, T4), EE] =
     RawXStream
       .combine(stream1, stream2, stream3, stream4)
-      .mapJs(JSArrayToTuple4[T1, T2, T3, T4] _)
+      .jsMap(JSArrayToTuple4[T1, T2, T3, T4] _)
 
   //
   //  @inline def combine[T1, T2, T3, T4, T5](
