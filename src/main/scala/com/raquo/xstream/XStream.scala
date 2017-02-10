@@ -114,14 +114,6 @@ object XStream extends StreamConversions {
     RawXStream.create(producer)
   }
 
-  @inline def createWithMemory[T, EE <: Exception](): MemoryStream[T, EE] = {
-    RawXStream.createWithMemory()
-  }
-
-  @inline def createWithMemory[T, EE <: Exception](producer: Producer[T, EE]): MemoryStream[T, EE] = {
-    RawXStream.createWithMemory(producer)
-  }
-
   // from<X>
 
   @inline def fromSeq[T](seq: Seq[T]): XStream[T, Nothing] = {

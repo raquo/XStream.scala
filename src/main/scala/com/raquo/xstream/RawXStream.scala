@@ -12,10 +12,6 @@ object RawXStream extends js.Object {
 
   def create[T, EE <: Exception](): XStream[T, EE] = js.native
 
-  def createWithMemory[T, EE <: Exception](): MemoryStream[T, EE] = js.native
-
-  def createWithMemory[T, EE <: Exception](producer: Producer[T, EE]): MemoryStream[T, EE] = js.native
-
   def never(): XStream[Nothing, Nothing] = js.native
 
   def empty(): XStream[Nothing, Nothing] = js.native
