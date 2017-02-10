@@ -37,6 +37,7 @@ In XStream.js/Cycle.js, a common convention is to name stream variables with tra
 
 ### Convenience
 * Document basic usage and scala-specific things (e.g. tuple streams, shameful streams)
+* Document EStream error tracking and caveats
 * Copy method documentation from original xstream
 * Add more TupleStreamN types
 * Add MemoryTupleStreamN convenience types

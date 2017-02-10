@@ -5,7 +5,7 @@ import scala.scalajs.js
 @js.native
 trait Subscription[T, EE <: Exception] extends js.Object {
 
-  private val _stream: XStream[T, EE] = js.native
+  private val _stream: EStream[T, EE] = js.native
 
   private val _listener: Listener[T, EE] = js.native
 

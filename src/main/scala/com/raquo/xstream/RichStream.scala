@@ -5,7 +5,7 @@ import scala.scalajs.js
 import scala.scalajs.js.|
 
 class RichStream[+T, +EE <: Exception] (
-  val stream: XStream[T, EE]
+  val stream: EStream[T, EE]
 ) extends AnyVal {
 
   @inline def addListener(listener: Listener[T, EE]): Unit = {
@@ -20,11 +20,11 @@ class RichStream[+T, +EE <: Exception] (
     stream.subscribe(listener)
   }
 
-  @inline def map[U](project: T => U): XStream[U, EE] = {
+  @inline def map[U](project: T => U): EStream[U, EE] = {
     stream.jsMap(project)
   }
 
-  @inline def filter(passes: T => Boolean): XStream[T, EE] = {
+  @inline def filter(passes: T => Boolean): EStream[T, EE] = {
     stream.filterJs(passes)
   }
 
@@ -36,36 +36,36 @@ class RichStream[+T, +EE <: Exception] (
 
   // @TODO[Integrity] ExpErr should be just EE, but I can't get ClassTag on it because this is a value class
   @inline def replaceExpectedErrors[T2 >: T, ExpErr >: EE <: Exception : ClassTag](
-    replace: ExpErr => XStream[T2, Nothing]
-  ): XStream[T2, Nothing] = {
+    replace: ExpErr => XStream[T2]
+  ): XStream[T2] = {
     val expectedErrorClass = implicitly[ClassTag[ExpErr]].runtimeClass
     stream.jsReplaceAllErrors((error: Exception | js.Error) => {
       if (expectedErrorClass.isInstance(error)) {
         replace(error.asInstanceOf[ExpErr])
       } else {
-        XStream.rethrowUnexpectedError(error.asInstanceOf[js.Error])
+        XStream.throwUnexpectedError(error.asInstanceOf[js.Error])
       }
     })
   }
 
   // @TODO[API] EE can be just E, but `|` breaks variance
   @inline def replaceAllErrors[T2 >: T](
-    replace: Exception | js.Error => XStream[T2, Nothing]
-  ): XStream[T2, Nothing] = {
+    replace: Exception | js.Error => XStream[T2]
+  ): XStream[T2] = {
     stream.jsReplaceAllErrors(replace)
   }
 
-  @inline def compose[T2, EE2 <: Exception, ResultStream <: XStream[T2, EE2]](
-    operator: XStream[T, EE] => ResultStream
+  @inline def compose[T2, EE2 <: Exception, ResultStream <: EStream[T2, EE2]](
+    operator: EStream[T, EE] => ResultStream
   ): ResultStream = {
-    stream.jsCompose[T2, EE2, ResultStream]((thisStream: XStream[T, EE]) => operator(thisStream))
+    stream.jsCompose[T2, EE2, ResultStream]((thisStream: EStream[T, EE]) => operator(thisStream))
   }
 
-  @inline def debug(spy: T => Unit): XStream[T, EE] = {
+  @inline def debug(spy: T => Unit): EStream[T, EE] = {
     stream.debugJs(spy)
   }
 
-  @inline def debugger(): XStream[T, EE] = {
+  @inline def debugger(): EStream[T, EE] = {
     stream.debugJs((value: T) => js.debugger())
   }
 

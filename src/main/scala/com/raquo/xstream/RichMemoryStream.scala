@@ -12,7 +12,7 @@ class RichMemoryStream[+T, +EE <: Exception] (
   }
 
   @inline def replaceAllErrors[T2 >: T](
-    replace: Exception | js.Error => XStream[T2, Nothing]
+    replace: Exception | js.Error => XStream[T2]
   ): MemoryStream[T2, Nothing] = {
     memoryStream.jsReplaceAllErrors(replace)
   }
