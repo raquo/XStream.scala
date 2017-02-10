@@ -76,59 +76,73 @@ trait XStream[+T, +EE <: Exception] extends js.Object {
 }
 
 /** @see https://github.com/staltz/xstream */
-object XStream {
+object XStream extends StreamConversions {
 
   // Simple streams
 
-  @inline def of[T](value: T): XStream[T, Nothing] =
+  @inline def of[T](value: T): XStream[T, Nothing] = {
     RawXStream.of(value)
+  }
 
-  @inline def never(): XStream[Nothing, Nothing] =
+  @inline def never(): XStream[Nothing, Nothing] = {
     RawXStream.never()
+  }
 
-  @inline def empty(): XStream[Nothing, Nothing] =
+  @inline def empty(): XStream[Nothing, Nothing] = {
     RawXStream.empty()
+  }
 
-  @inline def throwExpectedError[E <: Exception](error: E): XStream[Nothing, E] =
+  @inline def throwExpectedError[E <: Exception](error: E): XStream[Nothing, E] = {
     RawXStream.`throw`(error)
+  }
 
-  @inline def rethrowUnexpectedError(error: Exception | js.Error): XStream[Nothing, Nothing] =
+  @inline def rethrowUnexpectedError(error: Exception | js.Error): XStream[Nothing, Nothing] = {
     RawXStream.`throw`(error)
+  }
 
-  @inline def periodic(period: Int): XStream[Int, Nothing] =
+  @inline def periodic(period: Int): XStream[Int, Nothing] = {
     RawXStream.periodic(period)
+  }
 
   // create & createWithMemory
 
-  @inline def create[T, EE <: Exception](): XStream[T, EE] =
+  @inline def create[T, EE <: Exception](): XStream[T, EE] = {
     RawXStream.create()
+  }
 
-  @inline def create[T, EE <: Exception](producer: Producer[T, EE]): XStream[T, EE] =
+  @inline def create[T, EE <: Exception](producer: Producer[T, EE]): XStream[T, EE] = {
     RawXStream.create(producer)
+  }
 
-  @inline def createWithMemory[T, EE <: Exception](): MemoryStream[T, EE] =
+  @inline def createWithMemory[T, EE <: Exception](): MemoryStream[T, EE] = {
     RawXStream.createWithMemory()
+  }
 
-  @inline def createWithMemory[T, EE <: Exception](producer: Producer[T, EE]): MemoryStream[T, EE] =
+  @inline def createWithMemory[T, EE <: Exception](producer: Producer[T, EE]): MemoryStream[T, EE] = {
     RawXStream.createWithMemory(producer)
+  }
 
   // from<X>
 
-  @inline def fromSeq[T](seq: Seq[T]): XStream[T, Nothing] =
+  @inline def fromSeq[T](seq: Seq[T]): XStream[T, Nothing] = {
     RawXStream.fromArray(seq.toJSArray)
+  }
 
-  @inline def fromPromise[T, EE <: Exception](promise: js.Promise[T]): XStream[T, EE] =
+  @inline def fromPromise[T, EE <: Exception](promise: js.Promise[T]): XStream[T, EE] = {
     RawXStream.fromPromise(promise)
+  }
 
-  @inline def fromJSArray[T](array: js.Array[T]): XStream[T, Nothing] =
+  @inline def fromJSArray[T](array: js.Array[T]): XStream[T, Nothing] = {
     RawXStream.fromArray(array)
+  }
 
   //  @inline def fromJsObservable[T](observable: Any): Stream[T] = js.native // @TODO ES6 observable?
 
   // Merge
 
-  @inline def merge[T, EE <: Exception](streams: XStream[T, EE]*): XStream[T, EE] =
+  @inline def merge[T, EE <: Exception](streams: XStream[T, EE]*): XStream[T, EE] = {
     RawXStream.merge(streams: _*)
+  }
 
   // Combine
 
@@ -137,29 +151,32 @@ object XStream {
   @inline def combine[T1, T2, EE <: Exception](
     stream1: XStream[T1, EE],
     stream2: XStream[T2, EE]
-  ): XStream[(T1, T2), EE] =
+  ): XStream[(T1, T2), EE] = {
     RawXStream
       .combine(stream1, stream2)
       .jsMap(JSArrayToTuple2[T1, T2] _)
+  }
 
   @inline def combine[T1, T2, T3, EE <: Exception](
     stream1: XStream[T1, EE],
     stream2: XStream[T2, EE],
     stream3: XStream[T3, EE]
-  ): XStream[(T1, T2, T3), EE] =
+  ): XStream[(T1, T2, T3), EE] = {
     RawXStream
       .combine(stream1, stream2, stream3)
       .jsMap(JSArrayToTuple3[T1, T2, T3] _)
+  }
 
   @inline def combine[T1, T2, T3, T4, EE <: Exception](
     stream1: XStream[T1, EE],
     stream2: XStream[T2, EE],
     stream3: XStream[T3, EE],
     stream4: XStream[T4, EE]
-  ): XStream[(T1, T2, T3, T4), EE] =
+  ): XStream[(T1, T2, T3, T4), EE] = {
     RawXStream
       .combine(stream1, stream2, stream3, stream4)
       .jsMap(JSArrayToTuple4[T1, T2, T3, T4] _)
+  }
 
   //
   //  @inline def combine[T1, T2, T3, T4, T5](

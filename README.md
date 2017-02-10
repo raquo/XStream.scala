@@ -17,19 +17,19 @@ Per XStream.js docs, you should normally avoid using `shamefullySend*` methods, 
 You should not need to use any XStream traits starting with `Raw` in your code (there's only one right now).
 
 ## Features
-* Lightweight, type-safe wrapper over XStream.js – native Scala types, no extraneous allocations at runtime.
+* Lightweight, type-safe wrapper over XStream.js – native Scala types, making use of value classes to avoid extraneous allocations at runtime.
 * Convenient implicit conversions to work with streams of tuples and streams of streams.
 
 ## Caveats
 
-In XStream.js/Cycle.js, a common convention is to name stream variables with trailing dollar signs, e.g. `response$` for a stream of responses. In Scala.js this naming sometimes causes a weird compilation error. I'm not sure why exactly, but I think it might have something to do with Scala's or Scala.js' internal representation making use of trailing dollar signs as well. I will try to figure this out some day, for now I personally prepend `$` instead, e.g. `$response`. Although if you use jQuery maybe go for a `responseStream` instead to avoid the confusion.
+In XStream.js/Cycle.js, a common convention is to name stream variables with trailing dollar signs, e.g. `response$` for a stream of responses. In Scala.js this naming sometimes causes a weird compilation error. I'm not sure why exactly, but I think it might have something to do with Scala's or Scala.js' internal representation making use of trailing dollar signs as well. I will try to figure this out some day, for now I personally prepend `$` instead, e.g. `$response` for a stream of responses. Although if you use jQuery maybe go for a `responseStream` instead to avoid the confusion.
 
 ## TODO
 
 ### Integrity
-* Streams should be of `[T, E]` (error), not just of `[T]`
 * Resolve all `@TODO` comments in the code
-* Add tests (XStream has its own tests, but it would be nice to verify this interface as well)
+* Add tests (XStream has its own tests, but it we should verify this interface as well)
+* I'm not convinced of `XStream` being actually covariant in `T`. `immitate` method seems to violate it, but its use case is also extremely limited to creating proxies. Find a compromise.
 
 ### Completeness
 * Add interfaces for XStream extras
@@ -42,15 +42,15 @@ In XStream.js/Cycle.js, a common convention is to name stream variables with tra
 * Add MemoryTupleStreamN convenience types
 
 ### Performance
-* Examine generated JavaScript code: measure the file size, see what we can improve
+* Examine generated JavaScript code: measure the file size, see what can be improved
 
 ### Misc
 * Update to latest version of XStream
-* Figure out how versioning should work for this project
+* Figure out how versioning should work for this project (match XStream.js version?)
 * Figure out why we can't always use trailing dollar sign in stream variable names
 
 ## Reporting bugs
-* If you found a bug, please open a github issue describing actual and expected behavior.
+* If you found a bug, please open a Github issue describing actual and expected behavior.
 * Please make sure that the bug is not on the TODO list above, and that it's related to my scala interface, not the underlying XStream.js library.
 
 ## License
