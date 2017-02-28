@@ -22,9 +22,10 @@ trait MemoryStream[+T, +EE <: Exception] extends EStream[T, EE] {
   ): XMemoryStream[U] = js.native
 
   @JSName("debug")
-  override def debugJs(spy: js.Function1[T, Any]): MemoryStream[T, EE] = js.native
+  override def jsDebugWithSpy(spy: js.Function1[T, Any]): MemoryStream[T, EE] = js.native
 
-  override def debug(label: String): MemoryStream[T, EE] = js.native
+  @JSName("debug")
+  override def debugWithLabel(label: String): MemoryStream[T, EE] = js.native
 
   override def debug(): MemoryStream[T, EE] = js.native
 }

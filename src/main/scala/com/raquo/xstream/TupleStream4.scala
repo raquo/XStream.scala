@@ -1,5 +1,7 @@
 package com.raquo.xstream
 
+import scala.scalajs.js.annotation.JSName
+
 class TupleStream4[+T1, +T2, +T3, +T4, +EE <: Exception] (
   val tupleStream: EStream[(T1, T2, T3, T4), EE]
 ) extends AnyVal {
@@ -12,7 +14,8 @@ class TupleStream4[+T1, +T2, +T3, +T4, +EE <: Exception] (
     tupleStream.filterJs(passes.tupled)
   }
 
-  @inline def debug(spy: (T1, T2, T3, T4) => Any): EStream[(T1, T2, T3, T4), EE] = {
-    tupleStream.debugJs(spy.tupled)
+  @JSName("debug")
+  @inline def debugWithSpy(spy: (T1, T2, T3, T4) => Any): EStream[(T1, T2, T3, T4), EE] = {
+    tupleStream.jsDebugWithSpy(spy.tupled)
   }
 }

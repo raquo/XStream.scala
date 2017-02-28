@@ -1,6 +1,7 @@
 package com.raquo.xstream
 
 import scala.scalajs.js
+import scala.scalajs.js.annotation.JSName
 import scala.scalajs.js.|
 
 class RichMemoryStream[+T, +EE <: Exception] (
@@ -17,7 +18,8 @@ class RichMemoryStream[+T, +EE <: Exception] (
     memoryStream.jsReplaceAllErrors(replace)
   }
 
-  @inline def debug(spy: T => Any): MemoryStream[T, EE] = {
-    memoryStream.debugJs(spy)
+  @JSName("debug")
+  @inline def debugWithSpy(spy: T => Any): MemoryStream[T, EE] = {
+    memoryStream.jsDebugWithSpy(spy)
   }
 }

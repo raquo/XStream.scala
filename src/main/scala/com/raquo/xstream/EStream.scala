@@ -54,9 +54,10 @@ trait EStream[+T, +EE <: Exception] extends js.Object {
   def remember(): MemoryStream[T, EE] = js.native
 
   @JSName("debug")
-  def debugJs(spy: js.Function1[T, Any]): EStream[T, EE] = js.native
+  def jsDebugWithSpy(spy: js.Function1[T, Any]): EStream[T, EE] = js.native
 
-  def debug(label: String): EStream[T, EE] = js.native
+  @JSName("debug")
+  def debugWithLabel(label: String): EStream[T, EE] = js.native
 
   def debug(): EStream[T, EE] = js.native
 

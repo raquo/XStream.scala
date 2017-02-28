@@ -2,6 +2,7 @@ package com.raquo.xstream
 
 import scala.reflect.ClassTag
 import scala.scalajs.js
+import scala.scalajs.js.annotation.JSName
 import scala.scalajs.js.|
 
 class RichStream[+T, +EE <: Exception] (
@@ -61,12 +62,13 @@ class RichStream[+T, +EE <: Exception] (
     stream.jsCompose[T2, EE2, ResultStream]((thisStream: EStream[T, EE]) => operator(thisStream))
   }
 
-  @inline def debug(spy: T => Unit): EStream[T, EE] = {
-    stream.debugJs(spy)
+  @JSName("debug")
+  @inline def debugWithSpy(spy: T => Unit): EStream[T, EE] = {
+    stream.jsDebugWithSpy(spy)
   }
 
   @inline def debugger(): EStream[T, EE] = {
-    stream.debugJs((value: T) => js.debugger())
+    stream.jsDebugWithSpy((value: T) => js.debugger())
   }
 
   @inline def setDebugListener(listener: Listener[T, EE]): Unit = {
