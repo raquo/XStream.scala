@@ -20,7 +20,7 @@ trait EStream[+T, +EE <: Exception] extends js.Object {
   def mapTo[U](projectedValue: U): EStream[U, EE] = js.native
 
   @JSName("filter")
-  def filterJs(passes: js.Function1[T, Boolean]): EStream[T, EE] = js.native
+  def jsFilter(passes: js.Function1[T, Boolean]): EStream[T, EE] = js.native
 
   def take(amount: Int): EStream[T, EE] = js.native
 

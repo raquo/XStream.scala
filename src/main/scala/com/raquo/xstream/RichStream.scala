@@ -26,11 +26,11 @@ class RichStream[+T, +EE <: Exception] (
   }
 
   @inline def filter(passes: T => Boolean): EStream[T, EE] = {
-    stream.filterJs(passes)
+    stream.jsFilter(passes)
   }
 
   @inline def filterByValue[T2 >: T](value: T2): EStream[T, EE] = {
-    stream.filterJs((v: T) => v == value)
+    stream.jsFilter((v: T) => v == value)
   }
 
   @inline def fold[R](accumulate: (R, T) => R, seed: R): MemoryStream[R, EE] = {

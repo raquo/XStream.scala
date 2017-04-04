@@ -11,7 +11,7 @@ class TupleStream3[+T1, +T2, +T3, +EE <: Exception] (
   }
 
   @inline def filter(passes: (T1, T2, T3) => Boolean): EStream[(T1, T2, T3), EE] = {
-    tupleStream.filterJs(passes.tupled)
+    tupleStream.jsFilter(passes.tupled)
   }
 
   @JSName("debug")
