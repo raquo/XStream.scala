@@ -3,6 +3,76 @@ package com.raquo.xstream
 import scala.scalajs.js
 import scala.scalajs.js.|
 import scala.scalajs.js.JSConverters._
+import scala.scalajs.js.annotation.JSName
+
+/** @see https://github.com/staltz/xstream */
+@js.native
+trait XStream[+T] extends js.Object {
+
+  def addListener(listener: Listener[T]): Unit = js.native
+
+  def removeListener(listener: Listener[T]): Unit = js.native
+
+  def subscribe[T2 >: T](listener: Listener[T2]): Subscription[T2] = js.native
+
+  @JSName("map")
+  def jsMap[U](project: js.Function1[T, U]): XStream[U] = js.native
+
+  def mapTo[U](projectedValue: U): XStream[U] = js.native
+
+  @JSName("filter")
+  def jsFilter(passes: js.Function1[T, Boolean]): XStream[T] = js.native
+
+  def take(amount: Int): XStream[T] = js.native
+
+  def drop(amount: Int): XStream[T] = js.native
+
+  def last(): XStream[T] = js.native
+
+  def startWith[U >: T](initial: U): MemoryStream[U] = js.native
+
+  def endWhen(other: XStream[_]): XStream[T] = js.native
+
+  @JSName("fold")
+  def jsFold[R](accumulate: js.Function2[R, T, R], seed: R): MemoryStream[R] = js.native
+
+  @JSName("replaceError")
+  def jsReplaceError[U >: T](
+    replace: js.Function1[Exception | js.Error, XStream[U]]
+  ): XStream[U] = js.native
+
+  /** This is private because it works only on streams of streams. See [[MetaStream.flatten]] */
+  @JSName("flatten")
+  private[xstream] def jsFlatten[T2](): XStream[T2] = js.native
+
+  @JSName("compose")
+  def jsCompose[T2, ResultStream <: XStream[T2]](
+    operator: js.Function1[XStream[T], ResultStream]
+  ): ResultStream = js.native
+
+  def remember(): MemoryStream[T] = js.native
+
+  @JSName("debug")
+  def jsDebugWithSpy(spy: js.Function1[T, Any]): XStream[T] = js.native
+
+  @JSName("debug")
+  def debugWithLabel(label: String): XStream[T] = js.native
+
+  def debug(): XStream[T] = js.native
+
+  def setDebugListener(listener: Listener[T]): Unit = js.native
+
+  // @TODO[Integrity] Seems that this violates covariance. Do we eve need this? Maybe provide similar functionality via .compose?
+  private def imitate[U >: T](target: XStream[U]): Unit = js.native
+
+  // @TODO[Integrity] Seems that this violates covariance. However, this is only exposed on ShamefulStream which is not covariant. Is that ok?
+  private[xstream] def shamefullySendNext[U >: T](value: U): Unit = js.native
+
+  // @TODO[Integrity] Seems that this violates covariance. However, this is only exposed on ShamefulStream which is not covariant. Is that ok?
+  private[xstream] def shamefullySendError(error: Exception | js.Error): Unit = js.native
+
+  private[xstream] def shamefullySendComplete(): Unit = js.native
+}
 
 /** @see https://github.com/staltz/xstream */
 object XStream extends TupleOps {
@@ -21,8 +91,8 @@ object XStream extends TupleOps {
     RawXStream.empty()
   }
 
-  /** See also [[EStream.throwExpectedError]] */
-  @inline def throwUnexpectedError(error: Exception | js.Error): XStream[Nothing] = {
+  /** See also [[XStream.throwError]] */
+  @inline def throwError(error: Exception | js.Error): XStream[Nothing] = {
     RawXStream.`throw`(error)
   }
 
@@ -36,7 +106,7 @@ object XStream extends TupleOps {
     RawXStream.create()
   }
 
-  @inline def create[T](producer: Producer[T, Nothing]): XStream[T] = {
+  @inline def create[T](producer: Producer[T]): XStream[T] = {
     RawXStream.create(producer)
   }
 

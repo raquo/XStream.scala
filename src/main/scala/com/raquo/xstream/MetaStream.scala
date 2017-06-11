@@ -1,10 +1,10 @@
 package com.raquo.xstream
 
-class MetaStream[T, EE <: Exception] (
-  val streamOfStreams: XStream[EStream[T, EE]]
+class MetaStream[T] (
+  val streamOfStreams: XStream[XStream[T]]
 ) extends AnyVal {
 
-  @inline def flatten: EStream[T, EE] = {
-    streamOfStreams.jsFlatten[T, EE]()
+  @inline def flatten: XStream[T] = {
+    streamOfStreams.jsFlatten[T]()
   }
 }

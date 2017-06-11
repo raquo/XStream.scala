@@ -29,25 +29,11 @@ Per XStream.js docs, you should normally avoid using `shamefullySend*` methods, 
 
 You should not need to use `RawXStream` directly, use the `XStream` object instead.
 
-## Error Handling
-
-XStream.scala notably deviates from XStream.js by providing an optional way to declare what type of errors a stream is expected to produce, if any.
-
-In Javascript with dynamic typing this is not an issue any more than the rest of your code being dynamically typed, but in Scala it is valuable to differentiate error values from exceptions.
- 
-We provide an `EStream[Value, ExpectedError]` class to help solve this. The `XStream{Value]` type that you normally use is just `EStream[Value, Nothing]`.
-
-I'm not quite sure that this is a good idea. Initially this was added to support my Scala interface to Cycle.js due to how its HTTP driver works, but using `onError` to send back an error value seems like an FRP equivalent of using exceptions for business logic – something to be avoided. I have abandoned my Cycle.scala effort so maybe I'll remove this "feature" eventually.
-
 ## Caveats
 
 In XStream.js/Cycle.js, a common convention is to name stream variables with trailing dollar signs, e.g. `response$` for a stream of responses. In Scala.js this naming sometimes causes a weird compilation error. I'm not sure why exactly, but I think it might have something to do with Scala's or Scala.js' internal representation making use of trailing dollar signs as well. I will try to figure this out some day, for now I personally prepend `$` instead, e.g. `$response` for a stream of responses. Although if you use jQuery maybe go for a `responseStream` instead to avoid the confusion.
 
 ## TODO
-
-### Usability
-
-* Publish to MavenCentral (Soon!) (use `sbt publishLocal` for now)
 
 ### Integrity
 
@@ -62,7 +48,6 @@ In XStream.js/Cycle.js, a common convention is to name stream variables with tra
 ### Convenience
 
 * Document basic usage and scala-specific things (e.g. tuple streams, shameful streams)
-* Document EStream error tracking and caveats
 * Copy method documentation from original xstream
 * Add more TupleStreamN types
 * Add MemoryTupleStreamN convenience types
@@ -89,4 +74,4 @@ Nikita Gazarov – [raquo.com](http://raquo.com)
 
 XStream.scala is provided under the MIT license.
 
-XStream.scala is a Scala.js interface to André Staltz's [XStream.js](https://github.com/staltz/xstream), which we use under the terms of their [MIT license](https://github.com/staltz/xstream/blob/master/LICENSE).
+XStream.scala is a Scala.js interface to [XStream.js](https://github.com/staltz/xstream), which we use under the terms of its [MIT license](https://github.com/staltz/xstream/blob/master/LICENSE).

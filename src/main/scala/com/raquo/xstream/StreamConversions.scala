@@ -2,39 +2,39 @@ package com.raquo.xstream
 
 trait StreamConversions {
 
-  implicit def toRichStream[T, EE <: Exception](
-    stream: EStream[T, EE]
-  ): RichStream[T, EE] = {
+  implicit def toRichStream[T](
+    stream: XStream[T]
+  ): RichStream[T] = {
     new RichStream(stream)
   }
 
-  implicit def toRichMemoryStream[T, EE <: Exception](
-    memoryStream: MemoryStream[T, EE]
-  ): RichMemoryStream[T, EE] = {
+  implicit def toRichMemoryStream[T](
+    memoryStream: MemoryStream[T]
+  ): RichMemoryStream[T] = {
     new RichMemoryStream(memoryStream)
   }
 
-  implicit def toMetaStream[T, EE <: Exception] (
-    streamOfStreams: XStream[EStream[T, EE]]
-  ): MetaStream[T, EE] = {
+  implicit def toMetaStream[T] (
+    streamOfStreams: XStream[XStream[T]]
+  ): MetaStream[T] = {
     new MetaStream(streamOfStreams)
   }
 
-  implicit def toTupleStream2[T1, T2, EE <: Exception] (
-    tupleStream: EStream[(T1, T2), EE]
-  ): TupleStream2[T1, T2, EE] = {
+  implicit def toTupleStream2[T1, T2] (
+    tupleStream: XStream[(T1, T2)]
+  ): TupleStream2[T1, T2] = {
     new TupleStream2(tupleStream)
   }
 
-  implicit def toTupleStream3[T1, T2, T3, EE <: Exception] (
-    tupleStream: EStream[(T1, T2, T3), EE]
-  ): TupleStream3[T1, T2, T3, EE] = {
+  implicit def toTupleStream3[T1, T2, T3] (
+    tupleStream: XStream[(T1, T2, T3)]
+  ): TupleStream3[T1, T2, T3] = {
     new TupleStream3(tupleStream)
   }
 
-  implicit def toTupleStream4[T1, T2, T3, T4, EE <: Exception] (
-    tupleStream: EStream[(T1, T2, T3, T4), EE]
-  ): TupleStream4[T1, T2, T3, T4, EE] = {
+  implicit def toTupleStream4[T1, T2, T3, T4] (
+    tupleStream: XStream[(T1, T2, T3, T4)]
+  ): TupleStream4[T1, T2, T3, T4] = {
     new TupleStream4(tupleStream)
   }
 }
