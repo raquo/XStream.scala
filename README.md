@@ -4,6 +4,8 @@ XStream.scala is a **Scala.js** interface to [XStream.js](https://github.com/sta
 
 XStream is notably used in [Cycle.js](https://github.com/cyclejs/cyclejs), an honestly functional and reactive JavaScript framework.
 
+    "com.raquo.xstream" %%% "xstream" % "0.2"
+
 ## Features
 
 * Lightweight, type-safe wrapper over XStream.js – native Scala types making use of value classes to avoid extraneous allocations at runtime.
