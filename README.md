@@ -4,7 +4,7 @@ XStream.scala is a **Scala.js** interface to [XStream.js](https://github.com/sta
 
 XStream is notably used in [Cycle.js](https://github.com/cyclejs/cyclejs), an honestly functional and reactive JavaScript framework.
 
-    "com.raquo.xstream" %%% "xstream" % "0.2"
+    "com.raquo.xstream" %%% "xstream" % "0.2.1"
 
 ## Features
 
@@ -27,7 +27,7 @@ Notably, class `Stream` is named `XStream` in my interface to avoid the inconven
 
 When mapping over a stream of tuples, you can use `map` methods from `TupleStream<N>` implicit classes to avoid the need for boilerplate or partial functions.
 
-Per XStream.js docs, you should normally avoid using `shamefullySend*` methods, so in order to use them you need to explicitly create an instance of `ShamefulStream`.
+Per XStream.js docs, you should normally avoid using `shamefullySend*` methods, so in order to use them you need to explicitly create an instance of `ShamefulStream`. It is a value class, so [normally](https://docs.scala-lang.org/overviews/core/value-classes.html) the instantiation does not actually happen at runtime, thus there is no runtime penalty to it.
 
 You should not need to use `RawXStream` directly, use the `XStream` object instead.
 

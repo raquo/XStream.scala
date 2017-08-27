@@ -3,9 +3,9 @@ enablePlugins(ScalaJSPlugin)
 enablePlugins(ScalaJSBundlerPlugin)
 
 npmDependencies in Compile ++= Seq(
-  "xstream" -> "9.3.0"
+  "xstream" -> "10.9.0"
 )
 
 scalaJSModuleKind := ModuleKind.CommonJSModule
 
-emitSourceMaps in fastOptJS := false
+emitSourceMaps := false

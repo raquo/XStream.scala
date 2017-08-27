@@ -4,6 +4,7 @@ import scala.scalajs.js
 import scala.scalajs.js.annotation.JSImport
 import scala.scalajs.js.|
 
+// @TODO[Performance] This @JSImport brings in an unminified version of xstream. This is ok, right? We should configure our app's webpack to minimize it, right?
 @js.native
 @JSImport("xstream", JSImport.Default)
 object RawXStream extends js.Object {
