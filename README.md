@@ -79,6 +79,6 @@ Nikita Gazarov – [raquo.com](http://raquo.com)
 
 ## License and Credits
 
-XStream.scala is provided under the [MIT license](https://github.com/raquo/Sstream.scala/blob/master/LICENSE.md).
+XStream.scala is provided under the [MIT license](https://github.com/raquo/XStream.scala/blob/master/LICENSE.md).
 
 XStream.scala is a Scala.js interface to [XStream.js](https://github.com/staltz/xstream), which we use under the terms of its [MIT license](https://github.com/staltz/xstream/blob/master/LICENSE).
