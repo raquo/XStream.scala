@@ -59,14 +59,19 @@ In XStream.js/Cycle.js, a common convention is to name stream variables with tra
 * Update to latest version of XStream
 * Figure out how versioning should work for this project (match XStream.js version?)
 
-## Reporting bugs
+## Reporting Bugs
 
 * If you found a bug, please open a Github issue describing actual and expected behavior.
 * Please make sure that the bug is related to my Scala interface, not the underlying XStream.js library.
 
-## License
+## My Related Projects
 
-[MIT license](https://github.com/raquo/xstream-scala/blob/master/LICENSE.md)
+- [Scala DOM Types](https://github.com/raquo/scala-dom-types) – Type definitions that my projects use for all the HTML tags, attributes, properties, and styles
+- [Scala DOM Builder](https://github.com/raquo/scala-dom-builder) – Low-level Scala & Scala.js library for building and manipulating DOM trees
+- [Scala DOM TestUtils](https://github.com/raquo/scala-dom-testutils) – Test that your Javascript DOM nodes match your expectations
+- [Laminar](https://github.com/raquo/laminar) – Reactive UI library based on _Scala DOM Builder_
+- [Snabbdom.scala](https://github.com/raquo/Snabbdom.scala) – Scala.js interface to a popular JS virtual DOM library
+- [Cycle.scala](https://github.com/raquo/Cycle.scala) – Scala.js interface to a popular JS functional reactive library
 
 ## Author
 
@@ -74,6 +79,6 @@ Nikita Gazarov – [raquo.com](http://raquo.com)
 
 ## License and Credits
 
-XStream.scala is provided under the MIT license.
+XStream.scala is provided under the [MIT license](https://github.com/raquo/xstream-scala/blob/master/LICENSE.md).
 
 XStream.scala is a Scala.js interface to [XStream.js](https://github.com/staltz/xstream), which we use under the terms of its [MIT license](https://github.com/staltz/xstream/blob/master/LICENSE).

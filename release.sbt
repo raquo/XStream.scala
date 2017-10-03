@@ -10,7 +10,7 @@ crossScalaVersions := Seq("2.11.11", "2.12.3")
 
 homepage := Some(url("https://github.com/raquo/XStream.scala"))
 
-licenses += ("MIT", url("https://github.com/raquo/XStream.scala/blob/master/LICENSE.txt"))
+licenses += ("MIT", url("https://github.com/raquo/XStream.scala/blob/master/LICENSE.md"))
 
 scmInfo := Some(
   ScmInfo(
