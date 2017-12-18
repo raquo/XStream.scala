@@ -1,21 +1,18 @@
 package com.raquo.xstream
 
-import scala.scalajs.js.annotation.JSName
-
-class TupleStream2[+T1, +T2] (
-  val tupleStream: XStream[(T1, T2)]
+class TupleStream2[+A, +B] (
+  val tupleStream: XStream[(A, B)]
 ) extends AnyVal {
 
-  @inline def map[U](project: (T1, T2) => U): XStream[U] = {
+  @inline def map2[U](project: (A, B) => U): XStream[U] = {
     tupleStream.jsMap(project.tupled)
   }
 
-  @inline def filter(passes: (T1, T2) => Boolean): XStream[(T1, T2)] = {
+  @inline def filter2(passes: (A, B) => Boolean): XStream[(A, B)] = {
     tupleStream.jsFilter(passes.tupled)
   }
 
-  @JSName("debug")
-  @inline def debugWithSpy(spy: (T1, T2) => Any): XStream[(T1, T2)] = {
+  @inline def debugWithSpy2(spy: (A, B) => Any): XStream[(A, B)] = {
     tupleStream.jsDebugWithSpy(spy.tupled)
   }
 }

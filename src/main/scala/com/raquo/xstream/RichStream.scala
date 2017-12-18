@@ -28,26 +28,38 @@ class RichStream[+T] (
     stream.jsFilter(passes)
   }
 
-  @inline def filterByValue[T2 >: T](value: T2): XStream[T] = {
-    stream.jsFilter((v: T) => v == value)
-  }
-
   @inline def fold[R](accumulate: (R, T) => R, seed: R): MemoryStream[R] = {
     stream.jsFold(accumulate, seed)
   }
 
-  // @TODO[API] EE can be just E, but `|` breaks variance
   @inline def replaceError[T2 >: T](
     replace: Exception | js.Error => XStream[T2]
   ): XStream[T2] = {
     stream.jsReplaceError(replace)
   }
 
-  @inline def compose[T2, ResultStream <: XStream[T2]](
-    operator: XStream[T] => ResultStream
-  ): ResultStream = {
-    stream.jsCompose[T2, ResultStream]((thisStream: XStream[T]) => operator(thisStream))
+
+  // @TODO try this fix: https://stackoverflow.com/questions/6888136/type-inferred-to-nothing-in-scala
+
+  @inline def compose[T2, ResultStream[T2] <: XStream[T2]](
+    operator: XStream[T] => ResultStream[T2]
+  ): ResultStream[T2] = {
+    stream.jsCompose[T2, ResultStream[T2]]((thisStream: XStream[T]) => operator(thisStream))
   }
+
+  // @TODO not sure which signature is better... maybe rename the other compose to composeWithMemory, but then.... eh
+
+//  @inline def compose[T2](
+//    operator: XStream[T] => XStream[T2]
+//  ): XStream[T2] = {
+//    stream.jsCompose[T2, XStream[T2]](operator)
+//  }
+//
+//  @inline def compose[T2](
+//    operator: XStream[T] => MemoryStream[T2]
+//  ): MemoryStream[T2] = {
+//    stream.jsCompose[T2, MemoryStream[T2]](operator)
+//  }
 
   @JSName("debug")
   @inline def debugWithSpy(spy: T => Unit): XStream[T] = {

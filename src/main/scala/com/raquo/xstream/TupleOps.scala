@@ -3,17 +3,17 @@ package com.raquo.xstream
 import scala.scalajs.js
 import scala.scalajs.js.|
 
-trait TupleOps {
+object TupleOps {
 
-  @inline protected def JSArrayToTuple2[T1, T2](arr: js.Array[T1 | T2]): (T1, T2) = {
-    (arr(0).asInstanceOf[T1], arr(1).asInstanceOf[T2])
+  @inline def JSArrayToTuple2[A, B](arr: js.Array[A | B]): (A, B) = {
+    (arr(0).asInstanceOf[A], arr(1).asInstanceOf[B])
   }
 
-  @inline protected def JSArrayToTuple3[T1, T2, T3](arr: js.Array[T1 | T2 | T3]): (T1, T2, T3) = {
-    (arr(0).asInstanceOf[T1], arr(1).asInstanceOf[T2], arr(2).asInstanceOf[T3])
+  @inline def JSArrayToTuple3[A, B, C](arr: js.Array[A | B | C]): (A, B, C) = {
+    (arr(0).asInstanceOf[A], arr(1).asInstanceOf[B], arr(2).asInstanceOf[C])
   }
 
-  @inline protected def JSArrayToTuple4[T1, T2, T3, T4](arr: js.Array[T1 | T2 | T3 | T4]): (T1, T2, T3, T4) = {
-    (arr(0).asInstanceOf[T1], arr(1).asInstanceOf[T2], arr(2).asInstanceOf[T3], arr(3).asInstanceOf[T4])
+  @inline def JSArrayToTuple4[A, B, C, D](arr: js.Array[A | B | C | D]): (A, B, C, D) = {
+    (arr(0).asInstanceOf[A], arr(1).asInstanceOf[B], arr(2).asInstanceOf[C], arr(3).asInstanceOf[D])
   }
 }

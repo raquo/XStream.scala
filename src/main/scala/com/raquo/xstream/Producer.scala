@@ -3,14 +3,15 @@ package com.raquo.xstream
 import scala.scalajs.js
 import scala.scalajs.js.annotation.ScalaJSDefined
 
+/** @see https://github.com/staltz/xstream#producer */
 @ScalaJSDefined
-trait Producer[T] extends js.Object {
+trait Producer[+T] extends js.Object {
 
-  // @TODO What's the meaning of this?
+  // These methods are protected because they should not be called from Scala code, but you might need to override them
 
-  def start(listener: Listener[T]): Unit
+  protected def start(listener: Listener[T]): Unit
 
-  def stop(): Unit
+  protected def stop(): Unit
 }
 
 object Producer {

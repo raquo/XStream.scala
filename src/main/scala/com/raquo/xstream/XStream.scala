@@ -63,19 +63,18 @@ trait XStream[+T] extends js.Object {
   def setDebugListener(listener: Listener[T]): Unit = js.native
 
   // @TODO[Integrity] Seems that this violates covariance. Do we eve need this? Maybe provide similar functionality via .compose?
-  private def imitate[U >: T](target: XStream[U]): Unit = js.native
+  private[xstream] def imitate[U >: T](target: XStream[U]): Unit = js.native
 
   // @TODO[Integrity] Seems that this violates covariance. However, this is only exposed on ShamefulStream which is not covariant. Is that ok?
   private[xstream] def shamefullySendNext[U >: T](value: U): Unit = js.native
 
-  // @TODO[Integrity] Seems that this violates covariance. However, this is only exposed on ShamefulStream which is not covariant. Is that ok?
   private[xstream] def shamefullySendError(error: Exception | js.Error): Unit = js.native
 
   private[xstream] def shamefullySendComplete(): Unit = js.native
 }
 
 /** @see https://github.com/staltz/xstream */
-object XStream extends TupleOps {
+object XStream {
 
   // Simple streams
 
@@ -141,7 +140,7 @@ object XStream extends TupleOps {
   ): XStream[(T1, T2)] = {
     RawXStream
       .combine(stream1, stream2)
-      .jsMap(JSArrayToTuple2[T1, T2] _)
+      .jsMap(TupleOps.JSArrayToTuple2[T1, T2] _)
   }
 
   @inline def combine[T1, T2, T3](
@@ -151,7 +150,7 @@ object XStream extends TupleOps {
   ): XStream[(T1, T2, T3)] = {
     RawXStream
       .combine(stream1, stream2, stream3)
-      .jsMap(JSArrayToTuple3[T1, T2, T3] _)
+      .jsMap(TupleOps.JSArrayToTuple3[T1, T2, T3] _)
   }
 
   @inline def combine[T1, T2, T3, T4](
@@ -162,7 +161,7 @@ object XStream extends TupleOps {
   ): XStream[(T1, T2, T3, T4)] = {
     RawXStream
       .combine(stream1, stream2, stream3, stream4)
-      .jsMap(JSArrayToTuple4[T1, T2, T3, T4] _)
+      .jsMap(TupleOps.JSArrayToTuple4[T1, T2, T3, T4] _)
   }
 
   //

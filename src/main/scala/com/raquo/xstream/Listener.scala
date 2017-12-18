@@ -6,6 +6,7 @@ import scala.scalajs.js.|
 
 // @TODO[API] Should js.Error be part of the API, or should we wrap it into JavascriptException?
 
+/** @see https://github.com/staltz/xstream#listener */
 @ScalaJSDefined
 trait Listener[-T] extends js.Object {
 
