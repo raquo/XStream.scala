@@ -63,7 +63,8 @@ trait XStream[+T] extends js.Object {
   def setDebugListener(listener: Listener[T]): Unit = js.native
 
   // @TODO[Integrity] Seems that this violates covariance. Do we eve need this? Maybe provide similar functionality via .compose?
-  private[xstream] def imitate[U >: T](target: XStream[U]): Unit = js.native
+  // @TODO[API] This needs better safety, one way or another
+  def imitate[U >: T](target: XStream[U]): Unit = js.native
 
   // @TODO[Integrity] Seems that this violates covariance. However, this is only exposed on ShamefulStream which is not covariant. Is that ok?
   private[xstream] def shamefullySendNext[U >: T](value: U): Unit = js.native
